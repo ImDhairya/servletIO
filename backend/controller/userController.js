@@ -1,6 +1,7 @@
 import {Users} from "../modals/userSchema.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 export const Register = async (req, res) => {
   try {
@@ -59,21 +60,57 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   const {email, username, password} = req.body;
 
-  if (!username || !email || !password) {
-    return res.status(400).json({
-      message: "All fields are required",
-      success: false,
+  try {
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        message: "All fields are required",
+        success: false,
+      });
+    }
+
+    const user = await Users.findOne({email});
+
+    console.log(user._id);
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User does not exist",
+        success: false,
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Incorrect details",
+        success: false,
+      });
+    }
+
+    const token = jwt.sign({userId: user._id}, "sadfewdsv", {
+      expiresIn: "1d",
     });
+
+    return res
+      .status(201)
+      .cookie("token", token, {expiresIn: "1d", httpOnly: true})
+      .json({
+        message: "welcome user",
+        user: user._id,
+      });
+  } catch (error) {
+    return res.status(401).json({"Error login": error});
   }
+};
 
-  const user = await Users.findOne(email);
-
-  console.log(user);
-
-  if (!user) {
-    return res.status(400).json({
-      message: "User does not exist",
-      success: false,
+export const Logout = async (req, res) => {
+  try {
+    return res.cookie("token", "", {expiresIn: new Date(Date.now())}).json({
+      message: "User logged out successfuly",
+      success: true,
     });
+  } catch (error) {
+    return res.status(401).json({"Error logout": error});
   }
 };
