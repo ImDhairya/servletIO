@@ -1,33 +1,37 @@
 import express from "express";
 import {createServer} from "http";
-import {Server} from "socket.io";
-
+import initializeSocket from "./socket/socket.js";
+import cors from "cors";
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+import {Connect} from "./connect.js";
 
-io.on("connection", (socket) => {
-  // making the connection ready so that someone can connect to this
-  console.log("A user is connected ");
-  // console.log("What is socket: ", socket);
+Connect();
 
-  socket.on("chat", (payload) => {
-    // creating a separate event called chat
-    // console.log("What is payload", payload);
-    io.emit("chat", payload);
-  });
-});
-
-const count = io.engine.clientsCount;
-console.log(count);
-
-const count2 = io.of("/").sockets.size;
-console.log(count2);
-
+initializeSocket(server);
 server.listen(5000, () => {
-  console.log("Server is rrunning at 5000 okay");
+  console.log("Server is running at 5000 okay");
+});
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+import userRoute from "./routes/userRoutes.js";
+
+app.use("/api/user", userRoute);
+
+app.listen(3002, () => {
+  console.log("App is running and listeningg at 3002");
 });
