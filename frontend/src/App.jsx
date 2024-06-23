@@ -34,8 +34,8 @@ function App() {
         <br />
         <button type="submit"> Send</button>
       </form> */}
-      {/* <Login /> */}
-      <Chat />
+      <Login />
+      {/* <Chat /> */}
     </>
   );
 }

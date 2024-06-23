@@ -12,6 +12,7 @@ initializeSocket(server);
 server.listen(5000, () => {
   console.log("Server is running at 5000 okay");
 });
+const allowedOrigins = ["http://localhost:5173"];
 
 app.use(
   cors({

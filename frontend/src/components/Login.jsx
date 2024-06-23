@@ -1,19 +1,21 @@
 // Importing necessary components and hooks
 import {LockClosedIcon} from "@heroicons/react/20/solid";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import Button from "./utils/Button";
 import Input from "./utils/Input";
 import axios from "axios";
 import {Link, NavLink} from "react-router-dom";
+import {UserContext} from "../context/UserContext";
 
 // Component for the Login page
 const Login = () => {
   // State to manage input data (username and password)
   const [data, setData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [registered, setRegistered] = useState(false);
+  const {userId, setUserId} = useContext(UserContext);
 
   // Function to update state when input data changes
   const handleDataChange = (name) => (e) => {
@@ -26,8 +28,13 @@ const Login = () => {
   // Function to handle the login process
   const handleLogin = async () => {
     try {
-      const response = await axios.post("/api/login", data);
-      console.log("Login successful:", response.data);
+      const response = await axios.post(
+        "http://localhost:3002/api/user/login",
+        data
+      );
+      console.log("Login successful:", response.data.user);
+      setUserId(response.data.user);
+      console.log(userId , "userId id");
       // Perform any further actions upon successful login
     } catch (error) {
       console.error("Login failed:", error);
@@ -49,8 +56,8 @@ const Login = () => {
         {/* Input for entering the username */}
         <Input
           placeholder="Enter the username..."
-          value={data.username}
-          onChange={handleDataChange("username")}
+          value={data.email}
+          onChange={handleDataChange("email")}
         />
         {/* Input for entering the password */}
         <Input
