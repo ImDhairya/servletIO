@@ -4,9 +4,8 @@ import {useContext, useState} from "react";
 import Button from "./utils/Button";
 import Input from "./utils/Input";
 import axios from "axios";
-import {Link, NavLink} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {UserContext} from "../context/UserContext";
-
 // Component for the Login page
 const Login = () => {
   // State to manage input data (username and password)
@@ -14,6 +13,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   const [registered, setRegistered] = useState(false);
   const {userId, setUserId} = useContext(UserContext);
 
@@ -33,8 +33,9 @@ const Login = () => {
         data
       );
       console.log("Login successful:", response.data.user);
-      setUserId(response.data.user);
-      console.log(userId , "userId id");
+      console.log(userId, "userId id");
+      await setUserId(response.data.user);
+      navigate("/");
       // Perform any further actions upon successful login
     } catch (error) {
       console.error("Login failed:", error);

@@ -105,6 +105,21 @@ export const Login = async (req, res) => {
   }
 };
 
+export const UserDetails = async (req, res) => {
+  try {
+    const {id} = req.body;
+    const user = await Users.findById({_id: id});
+
+    return res.status(201).json({
+      user,
+      message: "User details found ",
+      success: true,
+    });
+  } catch (error) {
+    return res.status(401).json({"Error logout": error});
+  }
+};
+
 export const Logout = async (req, res) => {
   try {
     return res.cookie("token", "", {expiresIn: new Date(Date.now())}).json({

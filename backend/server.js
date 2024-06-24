@@ -30,8 +30,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 import userRoute from "./routes/userRoutes.js";
-
+import chatRoute from "./routes/chatRoutes.js";
 app.use("/api/user", userRoute);
+app.use("/api/chat", chatRoute);
 
 app.listen(3002, () => {
   console.log("App is running and listeningg at 3002");
