@@ -1,7 +1,6 @@
 import {Users} from "../modals/userSchema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
 
 export const Register = async (req, res) => {
   try {
@@ -128,5 +127,22 @@ export const Logout = async (req, res) => {
     });
   } catch (error) {
     return res.status(401).json({"Error logout": error});
+  }
+};
+
+export const AllUsers = async (req, res) => {
+  try {
+    const user = await Users.find({});
+    return res.status(201).json({
+      users: user,
+      message: "Found all users",
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error fetching all users",
+      success: false,
+      error: error.message, // Include error message for debugging
+    });
   }
 };

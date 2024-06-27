@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import {
+  AllUsers,
   Login,
   Logout,
   Register,
@@ -13,4 +14,5 @@ router.route("/login").post(Login);
 router.route("/register").post(Register);
 router.route("/logout").post(Logout);
 router.route("/getuser").post( UserDetails);
+router.route("/allUsers").post(AllUsers);
 export default router;

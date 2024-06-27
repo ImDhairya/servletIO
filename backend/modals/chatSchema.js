@@ -2,10 +2,10 @@ import mongoose, {Schema} from "mongoose";
 
 const chatSchema = new mongoose.Schema(
   {
-    isSender: {
-      type: Boolean,
-      required: true,
-    },
+    // isSender: {
+    //   type: Boolean,
+    // required: true,
+    // },
     content: {
       type: String,
       required: true,
