@@ -4,24 +4,31 @@ import {useContext} from "react";
 import {io} from "socket.io-client";
 import axios from "axios";
 import {UserContext} from "../context/UserContext";
+import {useNavigate} from "react-router-dom";
 
 const socket = io.connect("http://localhost:5000");
 function Chat() {
   const [message, setMessage] = useState(""); // state of message sending to socket
-  const [chat, setChat] = useState([]);
-  const [userData, setUserData] = useState("");
-  const {userId, setUserId} = useContext(UserContext);
-  const [isAnnonomous, setIsAnnonomous] = useState(false);
-  const [selectedReceiverId, setSelectedReceiverId] = useState("");
-  const [receiver, setReceiver] = useState("");
-  const [sender, setSender] = useState("");
-  const [recname, setrecname] = useState("");
+  const [chat, setChat] = useState([]); // this is for managing the chats that takes place
+  const [userData, setUserData] = useState(""); // gets user data from everywhere
+  const {userId, setUserId} = useContext(UserContext); // use context hook
+  const [isAnnonomous, setIsAnnonomous] = useState(false); // might get deleted if annonomous funcnality is  not impelmented
+  const [selectedReceiverId, setSelectedReceiverId] = useState(""); // it is for selecting receiver from all the users
+  const [receiver, setReceiver] = useState(""); // it is receiver id
+  const [sender, setSender] = useState(""); // not using it at all try removing it before next commit
+  const [recname, setrecname] = useState(""); // this is receivers name
+  const navigate = useNavigate();
 
   // gets you the user name and other user details
-  console.log(userData);
+  useEffect(() => {
+    if (!userId) {
+      navigate("/login");
+    }
+  }, []);
   const messanger = async () => {
     if (!userId) {
       setIsAnnonomous(true);
+      console.log(isAnnonomous);
     }
     const user = await axios.post("http://localhost:3002/api/user/getuser", {
       id: userId,
@@ -206,14 +213,16 @@ useEffect(() => {
             Select a user
           </option>
           {selectedReceiverId &&
-            selectedReceiverId.map((user) => (
-              <option
-                key={user._id}
-                value={user._id}
-              >
-                {user.name}
-              </option>
-            ))}
+            selectedReceiverId.map((user) =>
+              user._id !== userId ? (
+                <option
+                  key={user._id}
+                  value={user._id}
+                >
+                  {user.name}
+                </option>
+              ) : null
+            )}
         </select>
         {console.log(receiver)}
       </div>
