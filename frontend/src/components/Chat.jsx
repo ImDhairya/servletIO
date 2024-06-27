@@ -67,7 +67,7 @@ useEffect(() => {
         console.log(lastMessage);
         const data = await axios.post(
           "http://localhost:3002/api/chat/addChat",
-          {chat: lastMessage.message, userId}
+          {chat: lastMessage.message, userId, receiver}
         );
         if (!data) {
           console.log("Failed to send data to db");

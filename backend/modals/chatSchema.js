@@ -10,12 +10,16 @@ const chatSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    user: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
-      },
-    ],
+    sender: {
+      type: String,
+      required: true,
+    },
+    receiver: {
+      type: String,
+      required: true,
+    },
+    // #############################
+
     // isReceiver: {
     //   type: Boolean,
     //   required: true,

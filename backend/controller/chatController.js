@@ -4,7 +4,7 @@ import {Users} from "../modals/userSchema.js";
 
 export const addChat = async (req, res) => {
   try {
-    const {chat, userId, isSender} = req.body;
+    const {chat, userId, isSender, receiver} = req.body;
     console.log(req.body.user);
     const user = Users.findById({userId});
     if (!user) {
@@ -17,7 +17,9 @@ export const addChat = async (req, res) => {
     const data = await Chat.create({
       isSender,
       content: chat,
-      user: [userId],
+      sender: userId,
+      receiver: receiver,
+      // user: [userId],
     });
 
     console.log(data);
