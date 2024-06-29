@@ -12,9 +12,11 @@ const Login = () => {
   const [data, setData] = useState({
     email: "",
     password: "",
+    name: "",
+    username: "",
   });
   const navigate = useNavigate();
-  const [registered, setRegistered] = useState(false);
+  const [registered, setRegistered] = useState(true);
   const {userId, setUserId} = useContext(UserContext);
 
   // Function to update state when input data changes
@@ -29,7 +31,9 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3002/api/user/login",
+        registered
+          ? "http://localhost:3002/api/user/login"
+          : "http://localhost:3002/api/user/register",
         data
       );
       console.log("Login successful:", response.data.user);
@@ -54,30 +58,78 @@ const Login = () => {
         <h1 className="inline-flex items-center text-2xl mb-4 flex-col">
           <LockClosedIcon className="h-8 w-8 mb-2" /> Login
         </h1>
+
+        {registered ? (
+          <>
+            <Input
+              className="p-2 rounded-lg "
+              placeholder="Enter the username..."
+              value={data.email}
+              onChange={handleDataChange("email")}
+            />
+            {/* Input for entering the password */}
+            <Input
+              className="p-2 rounded-lg "
+              placeholder="Enter the password..."
+              type="password"
+              value={data.password}
+              onChange={handleDataChange("password")}
+            />
+            {/* Button to initiate the login process */}
+            <Button
+              // disabled={Object.values(data).some((val) => !val)}
+              fullWidth
+              onClick={handleLogin}
+            >
+              Submit
+            </Button>
+          </>
+        ) : (
+          <>
+            <Input
+              className="p-2 rounded-lg "
+              placeholder="Enter the username..."
+              value={data.email}
+              onChange={handleDataChange("email")}
+            />
+            {/* Input for entering the password */}
+            <Input
+              className="p-2 rounded-lg "
+              placeholder="Enter the password..."
+              type="password"
+              value={data.password}
+              onChange={handleDataChange("password")}
+            />
+            <Input
+              className="p-2 rounded-lg "
+              placeholder="Enter the Username..."
+              type="text"
+              value={data.username}
+              onChange={handleDataChange("username")}
+            />
+            <Input
+              className="p-2 rounded-lg "
+              placeholder="Enter the name..."
+              type="text"
+              value={data.name}
+              onChange={handleDataChange("name")}
+            />
+            {/* Button to initiate the login process */}
+            <Button
+              // disabled={Object.values(data).some((val) => !val)}
+              fullWidth
+              onClick={handleLogin}
+            >
+              Submit
+            </Button>
+          </>
+        )}
         {/* Input for entering the username */}
-        <Input
-          placeholder="Enter the username..."
-          value={data.email}
-          onChange={handleDataChange("email")}
-        />
-        {/* Input for entering the password */}
-        <Input
-          placeholder="Enter the password..."
-          type="password"
-          value={data.password}
-          onChange={handleDataChange("password")}
-        />
-        {/* Button to initiate the login process */}
-        <Button
-          disabled={Object.values(data).some((val) => !val)}
-          fullWidth
-          onClick={handleLogin}
-        >
-          Login
-        </Button>
 
         {/* Button to the registration page */}
-        <Button onClick={handleRegister}>Register</Button>
+        <Button onClick={handleRegister}>
+          {!registered ? "Login" : "Register"}
+        </Button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import {useState, useEffect, useId} from "react";
+import {useState, useEffect, useRef} from "react";
 // import "../App.css";
 import {useContext} from "react";
 import {io} from "socket.io-client";
@@ -17,7 +17,26 @@ function Chat() {
   const [receiver, setReceiver] = useState(""); // it is receiver id
   const [sender, setSender] = useState(""); // not using it at all try removing it before next commit
   const [recname, setrecname] = useState(""); // this is receivers name
+  const [dbData, setDbData] = useState([]);
   const navigate = useNavigate();
+  const scrollableDivRef = useRef(null);
+
+  async function getDbdata() {
+    try {
+      console.log(receiver, userId);
+      const users = await axios.post(
+        "http://localhost:3002/api/chat/fetchChat",
+        {userId, receiver}
+      );
+      setDbData(users.data.chats);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getDbdata();
+  }, [receiver]);
 
   // gets you the user name and other user details
   useEffect(() => {
@@ -65,10 +84,12 @@ useEffect(() => {
         console.log(chat);
         const lastMessage = chat[chat.length - 1];
         console.log(lastMessage);
-        const data = await axios.post(
-          "http://localhost:3002/api/chat/addChat",
-          {chat: lastMessage.message, userId, receiver}
-        );
+        if (lastMessage.senderId === userId) {
+          const data = await axios.post(
+            "http://localhost:3002/api/chat/addChat",
+            {chat: lastMessage.message, userId, receiver}
+          );
+        }
         if (!data) {
           console.log("Failed to send data to db");
         }
@@ -98,7 +119,6 @@ useEffect(() => {
 
   const sendChat = (e) => {
     e.preventDefault();
-    console.log();
 
     if (userId && receiver) {
       const messagePayload = {
@@ -192,15 +212,19 @@ useEffect(() => {
     setrecname(selectedUser ? selectedUser.name : "");
   }
 
+  //useEffect hook to get to the bottom of the chat
   useEffect(() => {
-    console.log(recname);
-  }, [recname]);
+    const scrollabelDiv = scrollableDivRef.current;
+    scrollabelDiv.scrollTop = scrollabelDiv.scrollHeight;
+  }, [chat]);
+
+  //Getting the data from db
 
   return (
-    <div className=" flex flex-col items-center h-[1000px] text-center">
+    <div className=" flex flex-col items-center h-[550px] text-center">
       <h1 className=" text-3xl">Chatting app</h1>
 
-      <div>
+      <div className=" p-3">
         <label>Select Receiver: </label>
         <select
           value={receiver}
@@ -227,66 +251,65 @@ useEffect(() => {
         {console.log(receiver)}
       </div>
       {console.log(chat)}
-      {chat.map((payload, index) => {
-        const senderIdStr = String(payload.senderId);
-        const userIdStr = String(userId);
-
-        console.log("payload:", payload);
-        console.log("userIdStr:", userIdStr);
-        console.log("senderIdStr:", senderIdStr);
-        console.log(
-          "Comparing userIdStr and senderIdStr:",
-          userIdStr === senderIdStr
-        );
-
-        return !payload.senderName ? (
-          <div className="flex  p-2 m-3 w-[1000px]  text-start  ">
-            {payload.message}
-          </div>
-        ) : (
-          <div className=" flex w-[1000px]  p-2 m-3 justify-end text-center ">
-            {payload.message}
-          </div>
-        );
-        // return (
-        //   <p key={index}>
-        //     {payload.message} |
-        //     {/* <span>
-        //       id:{" "}
-        //       {userIdStr === senderIdStr
-        //         ? payload.senderName
-        //         : payload.receiverName}
-        //     </span> */}
-        //     <span>id: {payload.senderName}</span>
-        //   </p>
-        // );
-      })}
-      <form
-        // onSubmit={sendChat}
-        action=""
-      >
-        <div className=" flex items-center h-full">
-          <div>
-            <input
-              type="text"
-              placeholder="send text"
-              value={message}
-              className=" p-3 m-4 rounded-lg "
-              onChange={(e) => setMessage(e.target.value)}
-              name="chat"
-            />
-          </div>
-          <div>
-            <button
-              type="submit"
-              onClick={sendChat}
-            >
-              {" "}
-              Send
-            </button>
-          </div>
+      <div className="flex flex-col items-center h-full justify-end">
+        <div
+          style={{msOverflowStyle: "none", scrollbarWidth: "none"}}
+          className=" overflow-y-auto "
+          ref={scrollableDivRef}
+        >
+          {chat.map((payload, index) => {
+            return !payload.senderName ? (
+              <div className="flex  p-2 m-3 w-[1000px]  text-start  ">
+                {payload.message}
+              </div>
+            ) : (
+              <div className=" flex w-[1000px]  p-2 m-3 justify-end text-center ">
+                {payload.message}
+              </div>
+            );
+            // return (
+            //   <p key={index}>
+            //     {payload.message} |
+            //     {/* <span>
+            //       id:{" "}
+            //       {userIdStr === senderIdStr
+            //         ? payload.senderName
+            //         : payload.receiverName}
+            //     </span> */}
+            //     <span>id: {payload.senderName}</span>
+            //   </p>
+            // );
+          })}
         </div>
-      </form>
+        <div>
+          <form
+            // onSubmit={sendChat}
+            action=""
+          >
+            <div className=" flex items-center end-0 h-full">
+              <div>
+                <input
+                  type="text"
+                  placeholder="send text"
+                  value={message}
+                  className=" p-3 m-4 rounded-lg "
+                  onChange={(e) => setMessage(e.target.value)}
+                  name="chat"
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  onClick={sendChat}
+                >
+                  {" "}
+                  Send
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

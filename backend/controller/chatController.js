@@ -70,15 +70,21 @@ export const fetchChat = async (req, res) => {
         chats: [],
       });
     }
-
     const senderChatId = await Users.findById({_id: userId}, "chats").exec();
-    
+
     console.log(senderChatId.chats);
+
+    const chats = await Chat.find({_id: {$in: senderChatId.chats}}).exec();
+
+    console.log(chats);
+    
+    return res.json({
+      chats: chat,
+    });
+
     const receiverChatId = await Users.findById({_id: receiver}, "chats");
 
     // console.log(senderChatId.chats);
-
-    // const chats = await Chat.find({_id: {$in: senderChatId.chats}}).exec();
 
     // const chats = senderChatId.chats.filter((chatId) => {
     //   return senderChatId.some((chat) => chat._id === chatId);
