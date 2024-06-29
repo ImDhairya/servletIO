@@ -253,33 +253,55 @@ useEffect(() => {
       {console.log(chat)}
       <div className="flex flex-col items-center h-full justify-end">
         <div
-          style={{msOverflowStyle: "none", scrollbarWidth: "none"}}
-          className=" overflow-y-auto "
           ref={scrollableDivRef}
+          style={{msOverflowStyle: "none", scrollbarWidth: "none"}}
+          className="overflow-y-auto"
         >
-          {chat.map((payload, index) => {
-            return !payload.senderName ? (
-              <div className="flex  p-2 m-3 w-[1000px]  text-start  ">
-                {payload.message}
-              </div>
-            ) : (
-              <div className=" flex w-[1000px]  p-2 m-3 justify-end text-center ">
-                {payload.message}
-              </div>
-            );
-            // return (
-            //   <p key={index}>
-            //     {payload.message} |
-            //     {/* <span>
-            //       id:{" "}
-            //       {userIdStr === senderIdStr
-            //         ? payload.senderName
-            //         : payload.receiverName}
-            //     </span> */}
-            //     <span>id: {payload.senderName}</span>
-            //   </p>
-            // );
-          })}
+          <div
+            style={{msOverflowStyle: "none", scrollbarWidth: "none"}}
+            className=""
+          >
+            {dbData.map((chat, index) => {
+              return chat.sender === userId ? (
+                <div className=" flex w-[1000px]  p-2 m-3 justify-end text-center ">
+                  {chat.content}
+                </div>
+              ) : (
+                <div className="flex  p-2 m-3 w-[1000px]  text-start  ">
+                  {chat.content}
+                </div>
+              );
+            })}
+          </div>
+          <div
+            style={{msOverflowStyle: "none", scrollbarWidth: "none"}}
+            className="  "
+          >
+            {chat.map((payload, index) => {
+              return !payload.senderName ? (
+                <div className="flex  p-2 m-3 w-[1000px]  text-start  ">
+                  {payload.message}
+                </div>
+              ) : (
+                <div className=" flex w-[1000px]  p-2 m-3 justify-end text-center ">
+                  {payload.message}
+                </div>
+              );
+              // this was previously used to get the ids inside of the uses but not going by that approach anymore
+              // return (
+              //   <p key={index}>
+              //     {payload.message} |
+              //     {/* <span>
+              //       id:{" "}
+              //       {userIdStr === senderIdStr
+              //         ? payload.senderName
+              //         : payload.receiverName}
+              //     </span> */}
+              //     <span>id: {payload.senderName}</span>
+              //   </p>
+              // );
+            })}
+          </div>
         </div>
         <div>
           <form
