@@ -29,6 +29,7 @@ function Chat() {
         {userId, receiver}
       );
       setDbData(users.data.chats);
+      setChat([]);
     } catch (error) {
       console.log(error);
     }
