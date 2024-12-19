@@ -5,7 +5,7 @@ export const Connect = () => {
     // enter your own mongoose database id
     mongoose
       .connect(
-        "mongodb+srv://maheshbhatt181995:7kmDH42pr939TpCT@temp.zsulayp.mongodb.net/?retryWrites=true&w=majority&appName=temp"
+        "mongodb+srv://pandyadhairya789:2kGd5oiw3nYoELSK@databaselauncher.y270c.mongodb.net/?retryWrites=true&w=majority&appName=DatabaseLauncher"
       )
       .then(() => {
         console.log("Connected to mongoose db");
